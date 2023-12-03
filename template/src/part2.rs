@@ -1,4 +1,4 @@
-pub fn solve(input: &str) -> u32 {
+pub fn solve(_input: &str) -> u32 {
     todo!("{{project-name}} part2")
 }
 
