@@ -1,0 +1,12 @@
+default:
+    just --list
+run part day=`date +%d`:
+    python3 day-{{day}}/part{{part}}.py < day-{{day}}/input.txt
+test part day=`date +%d`:
+    python3 day-{{day}}/part{{part}}.py < day-{{day}}/test.txt
+load day=`date +%-d` dir="$dir":
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    dir=$(printf "day-%02d" {{day}})
+    source ~/.bash_aliases
+    aoc-load 2023 {{day}} {{dir}}/input.txt

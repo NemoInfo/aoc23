@@ -1,8 +1,14 @@
 default:
   just --list
 run part day=`date +day-%d` release="":
-	cargo run -p {{day}} --bin part{{part}} {{release}}
+  cargo run -p {{day}} --bin part{{part}} {{release}}
 test part="" day=`date +day-%d`:
-	cargo test -p {{day}} {{part}}
+  cargo test -p {{day}} {{part}}
 create name=`date +day-%d`:
-	cargo generate --path ./template --name {{name}}
+  cargo generate --path ./template --name {{name}}
+load day=`date +%-d` dir="$dir":
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    dir=$(printf "day-%02d" {{day}})
+    source ~/.bash_aliases
+    aoc-load 2023 {{day}} {{dir}}/inputs/input.txt
