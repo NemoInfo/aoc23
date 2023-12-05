@@ -1,17 +1,21 @@
-lines = open(0).read().splitlines()
-seeds = [*map(int, lines[0].split(": ")[1].split())]
+seeds, *blocks = open(0).read().split("\n\n")
 
-maps = list(map(lambda x: list(map(lambda y: list(map(int, y.split())), x.splitlines()[1:])), "\n".join(lines).split("\n\n")[1:]))
+seeds = [*map(int, seeds.split(":")[1].split())]
 
-best = 1 << 31
-for seed in seeds:
-    n = seed
-    for ms in maps:
-        for m in ms:
-            if m[1] <= n < m[1] + m[2]:
-                n = n - m[1] + m[0]
+for block in blocks:
+    ranges = []
+    for line in block.splitlines()[1:]:
+        ranges.append(list(map(int, line.split())))
+
+    next = []
+    for seed in seeds:
+        for a, b, c in ranges:
+            if b <= seed < b + c:
+                next.append(seed - b + a)
                 break
-    best = min(best, n)
+        else:
+            next.append(seed)
 
+    seeds = next
 
-print(best)
+print(min(seeds))
