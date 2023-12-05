@@ -3,16 +3,25 @@
 My solutions to advent of code 2023.
 
 # Usage
-
-With [cargo](https://doc.rust-lang.org/cargo/) and [just](https://github.com/casey/just) installed you can simply run: <br/>
-
-For the **puzzle input**: 
+You will [just](https://github.com/casey/just) installed.
+# Rust
+For Rust you will also need [cargo](https://doc.rust-lang.org/cargo/). Then in `rust/`, you can simply run: <br />
+- for the **puzzle input**
 ``` shell
-just run day-<n> part<i>
+just run <part[1,2]> <?day[01..25]> <?args> 
 ```
-
-For the **test input**: 
+- for the **test input** 
 ``` shell
-just test day-<n> part<i>
+just test <?part[1,2]> <?day[01..25]> <?args> 
 ```
   
+# Python
+In the `python/` directory run:<br/>
+- for the **puzzle input**
+``` shell
+just run <part[1,2]> <?day[01..25]>
+```
+- for the **test input** 
+``` shell
+just test <part[1,2]> <?day[01..25]>
+``` 
