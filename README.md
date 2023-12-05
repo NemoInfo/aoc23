@@ -3,7 +3,7 @@
 My solutions to advent of code 2023.
 
 # Usage
-You will [just](https://github.com/casey/just) installed.
+You will need [just](https://github.com/casey/just) installed. 
 # Rust
 For Rust you will also need [cargo](https://doc.rust-lang.org/cargo/). Then in `rust/`, you can simply run: <br />
 - for the **puzzle input**
