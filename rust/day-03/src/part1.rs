@@ -1,47 +1,62 @@
-fn is_symbol(c: char) -> bool {
-    c.is_ascii_punctuation() && c != '.'
+use std::collections::HashSet;
+
+fn checked_add_signed_bounded(a: usize, b: isize, bound: usize) -> Option<usize> {
+    match a.checked_add_signed(b) {
+        Some(s) if s < bound => Some(s),
+        _ => None,
+    }
 }
 
 pub fn solve(input: &str) -> u32 {
-    let m = input
+    let grid = input
         .lines()
         .map(|line| line.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
 
-    let mut sum = 0;
+    let mut parts: HashSet<[usize; 2]> = HashSet::new();
 
-    for i in 0..m.len() {
-        let mut j = 0;
-        while j < m[0].len() {
-            if m[i][j].is_digit(10) {
-                let mut is_part = j >= 1
-                    && (is_symbol(m[i][j - 1])
-                        || (i >= 1 && is_symbol(m[i - 1][j - 1]))
-                        || (i + 1 < m.len() && is_symbol(m[i + 1][j - 1])));
-                let mut num = 0;
-                while j < m[0].len() && m[i][j].is_digit(10) {
-                    is_part = is_part
-                        || (i >= 1 && is_symbol(m[i - 1][j]))
-                        || (i + 1 < m.len() && is_symbol(m[i + 1][j]));
-                    num = num * 10 + m[i][j].to_digit(10).unwrap();
-                    j += 1;
-                }
-                is_part = is_part
-                    || j < m[0].len()
-                        && (is_symbol(m[i][j])
-                            || (i >= 1 && is_symbol(m[i - 1][j]))
-                            || (i + 1 < m.len() && is_symbol(m[i + 1][j])));
-
-                if is_part {
-                    sum += num;
-                }
-            } else {
-                j += 1;
+    for (r, row) in grid.iter().enumerate() {
+        for (c, &ch) in row.iter().enumerate() {
+            if ch == '.' || ch.is_digit(10) {
+                continue;
             }
+
+            #[rustfmt::skip]
+            (-1..=1).flat_map(|dr| (-1..=1).map(move |dc| [dr, dc]))
+                .filter_map(|[dr, dc]| {
+                    checked_add_signed_bounded(r, dr, grid.len())
+                        .zip(
+                    checked_add_signed_bounded(c, dc,  row.len()))})
+                .for_each(|(cr, mut cc)| {
+                    if !grid[cr][cc].is_digit(10) {
+                        return;
+                    }
+
+                    while cc > 0 && grid[cr][cc - 1].is_digit(10) {
+                        cc -= 1;
+                    }
+
+                    parts.insert([cr, cc]);
+                });
         }
     }
 
-    sum
+    parts
+        .iter()
+        .map(|&[r, cs]| {
+            let mut ce = cs + 1;
+
+            while ce < grid[0].len() && grid[r][ce].is_digit(10) {
+                ce += 1;
+            }
+
+            grid[r][cs..ce]
+                .iter()
+                .collect::<String>()
+                .parse::<u32>()
+                .unwrap()
+        })
+        .sum()
 }
 
 #[cfg(test)]
