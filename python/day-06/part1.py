@@ -1,15 +1,12 @@
-ts, ds = open(0).read().splitlines()
+from math import sqrt, ceil, floor
+ts, ds = [list(map(int, line.split(":")[1].split())) for line in open(0)]
 
-ts = [*map(int, ts.split(":")[1].split())]
-ds = [*map(int, ds.split(":")[1].split())]
-
-s = 1
+res = 1
 for t, d in zip(ts, ds):
-    c = 0
-    for b in range(0, t + 1):
-        if b * (t - b) > d:
-            c += 1
+    delta = sqrt(t ** 2 - 4 * d)
+    x1 = (t - delta) / 2
+    x2 = (t + delta) / 2
 
-    s *= c
+    res *= floor(x2) - ceil(x1) + 1 - (x1 == floor(x1)) - (x2 == ceil(x2))
 
-print(s)
+print(res)
