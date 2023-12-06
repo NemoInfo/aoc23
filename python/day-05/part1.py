@@ -15,7 +15,7 @@ for block in blocks:
                 break
         else:
             next.append(seed)
-
+ 
     seeds = next
 
 print(min(seeds))
