@@ -11,9 +11,6 @@ nodes = {
     ) for node in nodes.splitlines()
 }
 
-def not_done(l):
-    return len(l) != len(list(filter(lambda x: x[-1] == "Z", l)))
-
 currs = [node for node in nodes if node[-1] == "A"]
 periods = []
 for curr in currs:
