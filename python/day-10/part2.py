@@ -1,4 +1,4 @@
-grid = open(0).read().splitlines()
+grid = open(0).read().strip().splitlines()
 
 d = {
     "N": (-1, 0),
@@ -25,44 +25,43 @@ pipe = {
     "S": ["N", "E", "S", "W"],
 }
 
-def find_s():
-    for r, row in enumerate(grid):
-        for c, ch in enumerate(row):
-            if ch == "S":
-                return r, c
+# Find S
+for sr, row in enumerate(grid):
+    for sc, ch in enumerate(row):
+        if ch == "S":
+            break
+    else:
+        continue
+    break
 
-r, c = find_s()
-loop = {(r, c)}
-start_r, start_c = r, c
-in_out = pipe[grid[r][c]]
-for nd in in_out:
+loop = {(sr, sc)}
+# Find a pipe that connects to S
+r, c = sr, sc
+for nd in pipe[grid[r][c]]:
     nr, nc = d[nd][0] + r, d[nd][1] + c
     if o[nd] in pipe[grid[nr][nc]]:
         r, c = nr, nc
-        pd = nd
+        start_d = pd = nd
         break
-start_d = pd
 
+# Find pipes part of loop
 while grid[r][c] != "S":
     loop.add((r, c))
-    in_out = pipe[grid[r][c]]
-    for nd in in_out:
+    for nd in pipe[grid[r][c]]:
         if o[nd] == pd:
             continue
         nr, nc = d[nd][0] + r, d[nd][1] + c
-        if o[nd] in pipe[grid[nr][nc]]:
-            r, c = nr, nc
-            pd = nd
-            break
+        r, c = nr, nc
+        pd = nd
+        break
 end_d = pd
 
 start_sym = [s for s, l in pipe.items() if o[end_d] in l and start_d in l][0]
 
 n = len(grid) * 2 + 1
 m = len(grid[0]) * 2 + 1
-
+# Expand grid and filter junk
 egrid = [["."] * m for n in range(n)]
-
 for r in range(1, n, 2):
     for c in range(1, m, 2):
         sr = r // 2
@@ -74,58 +73,38 @@ for r in range(1, n, 2):
                 egrid[r][c] = grid[sr][sc]
 
 
-print("\n".join(["".join(row) for row in egrid]))
-loop = set(map(lambda x: (x[0] * 2 + 1, x[1] * 2 + 1), loop))
-
+grid = egrid
+# Connect horizontal
 for r in range(1, n - 1):
     for c in range(2, m - 2, 2):
-        if "E" in pipe[egrid[r][c - 1]]:
-            egrid[r][c] = "-"
-            loop.add((r, c))
+        if "E" in pipe[grid[r][c - 1]]:
+            grid[r][c] = "-"
 
+# Connect vertical
 for r in range(2, n - 2, 2):
     for c in range(1, m - 1):
-        if "N" in pipe[egrid[r + 1][c]]:
-            egrid[r][c] = "|"
-            loop.add((r, c))
-
-grid = egrid
-print("\n".join(["".join(row) for row in grid]))
+        if "N" in pipe[grid[r + 1][c]]:
+            grid[r][c] = "|"
 
 
-outside = set()
-def flood(r, c):
-    if (r, c) in outside or (r, c) in loop:
-        return
-    q = [(r, c)]
-    while len(q) > 0:
-        r, c = q.pop()
-        outside.add((r, c))
-        for dr, dc in d.values():
-            nr, nc = r + dr, c + dc
-            if not 0 <= nr < len(grid) or not 0 <= nc < len(grid[0]) \
-               or (nr, nc) in outside or (nr, nc) in loop:
-                continue
-            q.append((r + dr, c + dc))
+# Flood
+r, c = 0, 0
+q = [(r, c)]
+while len(q) > 0:
+    r, c = q.pop()
+    egrid[r][c] = "O"
+    for dr, dc in d.values():
+        nr, nc = r + dr, c + dc
+        if not 0 <= nr < len(grid) or not 0 <= nc < len(grid[0]) \
+           or egrid[nr][nc] != ".":
+            continue
+        q.append((r + dr, c + dc))
 
-left = [*zip(range(0, len(grid)), [0] * len(grid))]
-right = [*zip(range(0, len(grid)), [len(grid[0]) - 1] * len(grid))]
-top = [*zip([0] * len(grid[0]), range(0, len(grid[0])))]
-bot = [*zip([len(grid) - 1] * len(grid[0]), range(0, len(grid[0])))]
+# Count inside
+inside = 0
+for i in range(1, len(grid), 2):
+    for j in range(1, len(grid[0]), 2):
+        if egrid[i][j] == ".":
+            inside += 1
 
-border = [*left, *right, *bot, *top]
-for r, c in border:
-    flood(r, c)
-
-inside  = set()
-grid = [[*row] for row in grid]
-for i in range(len(grid)):
-    for j in range(len(grid[0])):
-        if (i, j) not in outside and (i, j) not in loop:
-            grid[i][j] = "I"
-            inside.add((i, j))
-grid = ["".join(row) for row in grid]
-
-print("\n".join(grid))
-
-print(len(list(filter(lambda x: x[0] & 1 and x[1] & 1, inside))))
+print(inside)
