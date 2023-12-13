@@ -72,7 +72,7 @@ for r in range(1, n, 2):
             else:
                 egrid[r][c] = grid[sr][sc]
 
-
+print("\n".join(grid))
 grid = egrid
 # Connect horizontal
 for r in range(1, n - 1):
@@ -85,6 +85,8 @@ for r in range(2, n - 2, 2):
     for c in range(1, m - 1):
         if "N" in pipe[grid[r + 1][c]]:
             grid[r][c] = "|"
+
+print("\n".join(["".join(row) for row in grid]))
 
 
 # Flood
