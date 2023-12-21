@@ -1,11 +1,14 @@
 patterns = [*map(str.splitlines, open(0).read().split("\n\n"))]
 
-def check_horizontal(pattern):
-    for r in range(len(pattern) - 1):
-        for i in range(min(r, len(pattern) - r - 2) + 1):
-            if pattern[r - i] != pattern[r + 1 + i]:
-                break
-        else:
+def check_horizontal(m):
+    for r in range(1, len(m)):
+        top = m[:r][::-1]
+        bot = m[r:]
+
+        top = top[:len(bot)]
+        bot = bot[:len(top)]
+
+        if top == bot:
             return r
 
 
@@ -14,14 +17,11 @@ for pattern in patterns:
     horizontal = check_horizontal(pattern)
 
     if horizontal is not None:
-        total += 100 * (horizontal + 1)
+        total += 100 * horizontal
         continue
 
-    pattern_t = [
-        "".join([pattern[r][c] for r in range(len(pattern))])
-        for c in range(len(pattern[0]))
-    ]
+    pattern_t = ["".join(row) for row in zip(*pattern)]
 
-    total += 1 + check_horizontal(pattern_t)
+    total += check_horizontal(pattern_t)
 
 print(total)

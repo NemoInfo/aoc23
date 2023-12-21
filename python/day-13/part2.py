@@ -31,10 +31,7 @@ for pattern in patterns:
         total += 100 * (horizontal + 1)
         continue
 
-    pattern_t = [
-        "".join([pattern[r][c] for r in range(len(pattern))])
-        for c in range(len(pattern[0]))
-    ]
+    pattern_t = ["".join(row) for row in zip(*pattern)]
 
     total += 1 + check_horizontal(to_ints(pattern_t))
 
